@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Fixtures{% endblock %}
+{% block content %}
+  <h1 class="page-title">Charlton Athletic Away Fixtures &mdash; 2026/27</h1>
+  <p>Every away day unlocks its own Double Clubble quiz at 7:00am on the day of the match</p>
+
+  <ul class="fixture-list">
+    {% for item in fixtures %}
+      {% set quiz = item.quiz %}
+      <li>
+        <a class="fixture-card {{ 'locked' if not item.unlocked else '' }}" href="{{ url_for('quiz.quiz_page', quiz_id=quiz.quiz_id) }}">
+          <div class="fixture-main">
+            <span class="fixture-opponent">{{ quiz.opponent }} vs Charlton Athletic</span>
+            <span class="fixture-meta">
+              {{ quiz.fixture_date.strftime('%A %d %B %Y') }}
+              {% if quiz.venue %} &middot; {{ quiz.venue }}{% endif %}
+            </span>
+          </div>
+          <span class="fixture-status {{ 'unlocked' if item.unlocked else 'locked' }}">
+            {% if item.unlocked %}
+              Play now
+            {% else %}
+              &#128274; Unlocks {{ quiz.unlock_display }}
+            {% endif %}
+          </span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

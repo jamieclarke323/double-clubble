@@ -1,0 +1,464 @@
+/* Double Clubble - red / white / black theme, Futura Bold throughout.
+   Futura is a commercial font family and can't be bundled with the app,
+   so we declare it first and fall back to close free equivalents
+   (system "Futura" if installed, else Century Gothic / Trebuchet / sans). */
+
+@font-face {
+  font-family: "Futura Bold";
+  src: local("Futura Bold"), local("Futura-Bold"), local("Futura");
+  font-weight: 700;
+}
+
+:root {
+  --charlton-red: #d0021b;
+  --charlton-red-dark: #8f0212;
+  --charlton-black: #101010;
+  --charlton-white: #ffffff;
+  --grey-light: #f2f2f2;
+  --grey-mid: #cccccc;
+  font-family: "Futura Bold", "Century Gothic", "Trebuchet MS", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--charlton-black);
+  color: var(--charlton-white);
+  font-family: inherit;
+  font-weight: 700;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-header {
+  background: linear-gradient(135deg, var(--charlton-red) 0%, var(--charlton-red-dark) 100%);
+  padding: 1.5rem 1rem 1.25rem;
+  text-align: center;
+  border-bottom: 6px solid var(--charlton-black);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 2.2rem;
+  letter-spacing: 0.05em;
+}
+
+.brand-icon {
+  height: 1.9rem;
+  width: auto;
+  display: block;
+}
+
+.brand-double {
+  color: var(--charlton-white);
+}
+
+.brand-clubble {
+  color: var(--charlton-black);
+  -webkit-text-stroke: 1px var(--charlton-white);
+}
+
+.brand-tagline {
+  margin: 0.4rem 0 0;
+  color: var(--charlton-white);
+  font-size: 0.9rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.site-main {
+  flex: 1;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.75rem;
+  color: var(--grey-mid);
+  border-top: 4px solid var(--charlton-red);
+}
+
+/* Fixture list */
+.fixture-list {
+  list-style: none;
+  margin: 1.5rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.fixture-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--grey-light);
+  color: var(--charlton-black);
+  border-left: 6px solid var(--charlton-red);
+  border-radius: 6px;
+  padding: 0.9rem 1.1rem;
+  transition: transform 0.1s ease;
+}
+
+.fixture-card.locked {
+  opacity: 0.75;
+  border-left-color: var(--grey-mid);
+}
+
+.fixture-card:hover {
+  transform: translateX(4px);
+}
+
+.fixture-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.fixture-opponent {
+  font-size: 1.1rem;
+}
+
+.fixture-meta {
+  font-size: 0.8rem;
+  color: #444;
+  text-transform: none;
+  font-weight: 400;
+  font-family: "Trebuchet MS", sans-serif;
+}
+
+.fixture-status {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.fixture-status.unlocked {
+  background: var(--charlton-red);
+  color: var(--charlton-white);
+}
+
+.fixture-status.locked {
+  background: var(--charlton-black);
+  color: var(--charlton-white);
+}
+
+.page-title {
+  font-size: 1.6rem;
+  border-bottom: 3px solid var(--charlton-red);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Locked / not found page */
+.locked-panel {
+  background: var(--grey-light);
+  color: var(--charlton-black);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  border: 3px solid var(--charlton-red);
+  margin-top: 2rem;
+}
+
+.locked-panel .unlock-time {
+  display: block;
+  font-size: 1.4rem;
+  margin: 1rem 0;
+  color: var(--charlton-red);
+}
+
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.4rem;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--charlton-red);
+  color: var(--charlton-white);
+  font-size: 0.95rem;
+}
+
+.btn:hover {
+  background: var(--charlton-red-dark);
+}
+
+.btn.secondary {
+  background: var(--charlton-black);
+  border: 2px solid var(--charlton-white);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 2px solid var(--charlton-white);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: var(--charlton-white);
+  text-decoration: underline;
+}
+
+/* Quiz page */
+.quiz-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.quiz-progress {
+  font-size: 1.1rem;
+  color: var(--charlton-red);
+}
+
+.guess-bar {
+  display: flex;
+  gap: 0.6rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.guess-bar input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.7rem 0.9rem;
+  border-radius: 6px;
+  border: 2px solid var(--charlton-red);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.action-bar {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+#feedback-message {
+  min-height: 1.6rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+}
+
+#feedback-message.correct {
+  background: #1f7a1f;
+  color: var(--charlton-white);
+}
+
+#feedback-message.close {
+  background: #b8860b;
+  color: var(--charlton-white);
+}
+
+#feedback-message.wrong {
+  background: var(--charlton-red-dark);
+  color: var(--charlton-white);
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.player-slot {
+  background: linear-gradient(rgba(242, 242, 242, 0.88), rgba(242, 242, 242, 0.88)),
+    url("../img/sword-icon-black.png") no-repeat center center / 2.2rem auto,
+    var(--grey-light);
+  color: var(--charlton-black);
+  border-radius: 8px;
+  padding: 0.7rem 0.8rem;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 2px solid var(--grey-mid);
+}
+
+.player-slot.found {
+  border-color: var(--charlton-red);
+  background: var(--charlton-white);
+}
+
+.player-slot .slot-index {
+  font-size: 0.7rem;
+  color: #888;
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 400;
+}
+
+.player-slot .slot-name {
+  font-size: 1.05rem;
+  margin: 0.15rem 0;
+}
+
+.player-slot .slot-detail {
+  font-size: 0.72rem;
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 400;
+  color: #333;
+}
+
+.player-slot .slot-clue {
+  font-size: 0.72rem;
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 700;
+  color: var(--charlton-red-dark);
+  margin-top: 0.2rem;
+}
+
+.player-slot .slot-placeholder {
+  font-size: 1.4rem;
+  color: var(--grey-mid);
+  text-align: center;
+}
+
+.congrats-banner {
+  background: var(--charlton-red);
+  color: var(--charlton-white);
+  padding: 1.2rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  border: 3px solid var(--charlton-black);
+}
+
+.share-bar {
+  display: none;
+  margin-bottom: 1rem;
+}
+
+.share-bar.visible {
+  display: block;
+}
+
+.share-preview {
+  max-width: 260px;
+  width: 100%;
+  border-radius: 10px;
+  border: 3px solid var(--charlton-red);
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.share-hint {
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: #444;
+  text-align: center;
+  margin: 0 0 1rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-box {
+  background: var(--charlton-white);
+  color: var(--charlton-black);
+  border-radius: 10px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+  border: 3px solid var(--charlton-red);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-box h2 {
+  margin-top: 0;
+  color: var(--charlton-red);
+}
+
+.modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+.modal-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.clue-results {
+  margin-top: 1rem;
+  max-height: 240px;
+  overflow-y: auto;
+  border-top: 2px solid var(--grey-mid);
+  padding-top: 0.6rem;
+}
+
+.clue-row {
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 400;
+  font-size: 0.85rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--grey-light);
+}
+
+@media (max-width: 480px) {
+  .brand {
+    font-size: 1.6rem;
+  }
+  .players-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Quiz not found{% endblock %}
+{% block content %}
+  <h1 class="page-title">Quiz not found</h1>
+  <p>We couldn't find a Double Clubble quiz for "{{ quiz_id }}".</p>
+  <a class="back-link" href="{{ url_for('quiz.index') }}">&larr; Back to all fixtures</a>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.opponent }} - Locked{% endblock %}
+{% block content %}
+  <h1 class="page-title">{{ quiz.opponent }} vs Charlton Athletic</h1>
+  <div class="locked-panel">
+    <p>This quiz isn't available yet.</p>
+    <span class="unlock-time">
+      Unlocks {{ quiz.unlock_display }}
+    </span>
+    <p>Come back then to name every player who has turned out for both Charlton Athletic and {{ quiz.opponent }}.</p>
+    <a class="back-link" href="{{ url_for('quiz.index') }}">&larr; Back to all fixtures</a>
+  </div>
+{% endblock %}

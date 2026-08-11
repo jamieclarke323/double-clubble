@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.opponent }}{% endblock %}
+
+{% block content %}
+  <div class="quiz-header">
+    <div>
+      <h1 class="page-title">{{ quiz.opponent }} vs Charlton Athletic</h1>
+      <p class="fixture-meta">{{ quiz.fixture_date.strftime('%A %d %B %Y') }}{% if quiz.venue %} &middot; {{ quiz.venue }}{% endif %}</p>
+    </div>
+    <div class="quiz-progress" id="progress-display">
+      <span id="solved-count">{{ solved_count }}</span> / <span id="total-count">{{ total }}</span> found
+    </div>
+  </div>
+
+  {% if given_up %}
+    <div class="congrats-banner" id="reveal-banner">All answers have been revealed below.</div>
+  {% elif completed %}
+    <div class="congrats-banner" id="congrats-banner">Congratulations! You found every player!</div>
+  {% endif %}
+
+  <div class="share-bar {{ 'visible' if completed or given_up else '' }}" id="share-bar">
+    <button type="button" class="btn secondary" id="share-result-btn">Share your result</button>
+  </div>
+
+  <div id="feedback-message"></div>
+
+  <form id="guess-form" class="guess-bar" autocomplete="off">
+    <input type="text" id="guess-input" name="guess" placeholder="Type a player's surname..."
+      {% if completed or given_up %}disabled{% endif %}>
+    <button type="submit" class="btn" {% if completed or given_up %}disabled{% endif %}>Guess</button>
+  </form>
+
+  <div class="action-bar">
+    <button type="button" class="btn secondary" id="open-clue-modal" {% if completed or given_up %}disabled{% endif %}>Get a clue</button>
+    <button type="button" class="btn secondary" id="open-giveup-modal" {% if completed or given_up %}disabled{% endif %}>Give up</button>
+    <button type="button" class="btn secondary" id="open-reset-modal">Reset quiz</button>
+    <a class="btn ghost" href="{{ url_for('quiz.index') }}">All fixtures</a>
+  </div>
+
+  <div class="players-grid" id="players-grid">
+    {% for slot in players_view %}
+      {% if slot.found %}
+        <div class="player-slot found" data-index="{{ slot.index }}">
+          <span class="slot-index">#{{ slot.index + 1 }}</span>
+          <span class="slot-name">{{ slot.name }}</span>
+          <span class="slot-detail">{{ slot.position }}</span>
+          <span class="slot-detail">Charlton: {{ slot.years_charlton }} ({{ slot.apps_charlton }} apps, {{ slot.goals_charlton }} goals)</span>
+          <span class="slot-detail">{{ quiz.opponent }}: {{ slot.years_opponent }} ({{ slot.apps_opponent }} apps, {{ slot.goals_opponent }} goals)</span>
+        </div>
+      {% else %}
+        <div class="player-slot" data-index="{{ slot.index }}">
+          <span class="slot-index">#{{ slot.index + 1 }}</span>
+          <span class="slot-placeholder">?</span>
+          <span class="slot-clue" data-clue-holder></span>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <!-- Clue modal -->
+  <div class="modal-overlay" id="clue-modal-overlay">
+    <div class="modal-box">
+      <h2>Choose your clues</h2>
+      <p>Tick whichever clues you'd like for every remaining player.</p>
+      <div class="modal-options">
+        <label><input type="checkbox" name="clue-type" value="apps"> Apps</label>
+        <label><input type="checkbox" name="clue-type" value="years"> Years</label>
+        <label><input type="checkbox" name="clue-type" value="goals"> Goals</label>
+        <label><input type="checkbox" name="clue-type" value="position"> Position</label>
+        <label><input type="checkbox" name="clue-type" value="initials"> Initials</label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="clue-cancel">Cancel</button>
+        <button type="button" class="btn" id="clue-submit">Show clues</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Give up confirmation modal -->
+  <div class="modal-overlay" id="giveup-modal-overlay">
+    <div class="modal-box">
+      <h2>Give up?</h2>
+      <p>Are you sure? This will reveal every remaining answer and end the quiz.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="giveup-cancel">Cancel</button>
+        <button type="button" class="btn" id="giveup-confirm">Yes, reveal answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset confirmation modal -->
+  <div class="modal-overlay" id="reset-modal-overlay">
+    <div class="modal-box">
+      <h2>Reset quiz?</h2>
+      <p>This will clear all your found answers for this quiz so you can start again from scratch.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="reset-cancel">Cancel</button>
+        <button type="button" class="btn" id="reset-confirm">Yes, reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fallback share preview modal (used when the Web Share API can't
+       attach a file directly, e.g. some desktop browsers) -->
+  <div class="modal-overlay" id="share-modal-overlay">
+    <div class="modal-box">
+      <h2>Your result image</h2>
+      <img class="share-preview" id="share-preview-image" alt="Your Double Clubble result">
+      <p class="share-hint">Save the image and share with friends!</p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="share-modal-close">Close</button>
+        <a class="btn" id="share-download-link" download="double-clubble-result.png">Download image</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    window.QUIZ_ID = {{ quiz.quiz_id|tojson }};
+    window.QUIZ_OPPONENT = {{ quiz.opponent|tojson }};
+    window.QUIZ_TOTAL = {{ total|tojson }};
+    window.SITE_NAME = {{ site_name|tojson }};
+    window.SITE_URL = {{ site_url|tojson }};
+    window.SWORD_ICON_URL = {{ url_for('static', filename='img/sword-icon-white.png')|tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+{% endblock %}
