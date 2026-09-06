@@ -238,6 +238,25 @@ a {
 }
 
 /* Quiz page */
+.quiz-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 0.35rem;
+  color: var(--charlton-red);
+  font-size: 2rem;
+  line-height: 1;
+  border: 2px solid var(--charlton-red);
+  border-radius: 6px;
+}
+
+.quiz-back:hover {
+  background: var(--charlton-red);
+  color: var(--charlton-white);
+}
+
 .quiz-header {
   display: flex;
   flex-wrap: wrap;
