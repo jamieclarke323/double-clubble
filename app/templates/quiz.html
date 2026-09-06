@@ -24,6 +24,7 @@
 
   <div id="feedback-message"></div>
 
+  <p class="guess-hint">You only need to click the 'Guess' button if unsure of the spelling</p>
   <form id="guess-form" class="guess-bar" autocomplete="off">
     <input type="text" id="guess-input" name="guess" placeholder="Type a player's surname..."
       {% if completed or given_up %}disabled{% endif %}>

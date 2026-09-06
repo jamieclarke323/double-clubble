@@ -81,6 +81,42 @@ def test_correct_guess_marks_player_found(client, app):
     assert data["completed"] is False
 
 
+def test_exact_guess_endpoint_awards_perfect_answer(client, app):
+    quiz = _tiny_quiz_app(app)
+    resp = client.post(f"/quiz/{quiz.quiz_id}/exact", json={"guess": "Bent"})
+    data = resp.get_json()
+    assert data["status"] == "correct"
+    assert data["player"]["name"] == "Darren Bent"
+    assert data["solved_count"] == 1
+
+
+def test_exact_guess_endpoint_does_not_auto_award_short_surname(client, app):
+    players = [
+        Player(
+            name="Lee FC",
+            position="GK",
+            years_charlton="2020",
+            apps_charlton=1,
+            goals_charlton=0,
+            years_opponent="2021",
+            apps_opponent=1,
+            goals_opponent=0,
+        )
+    ]
+    quiz = Quiz(
+        quiz_id="short-surname-quiz",
+        opponent="Short FC",
+        fixture_date=(datetime.now(QUIZ_TIMEZONE) - timedelta(days=1)).date(),
+        players=players,
+    )
+    quiz.unlock_at = datetime.now(QUIZ_TIMEZONE) - timedelta(days=1)
+    app.config["QUIZZES"] = [quiz]
+    app.config["QUIZZES_BY_ID"] = {quiz.quiz_id: quiz}
+
+    resp = client.post(f"/quiz/{quiz.quiz_id}/exact", json={"guess": "Lee FC"})
+    assert resp.get_json()["status"] == "not_exact"
+
+
 def test_close_misspelling_gives_close_feedback(client, app):
     quiz = _tiny_quiz_app(app)
     resp = client.post(f"/quiz/{quiz.quiz_id}/guess", json={"guess": "Powel"})

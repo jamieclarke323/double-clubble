@@ -10,6 +10,7 @@
   const feedback = document.getElementById("feedback-message");
   const grid = document.getElementById("players-grid");
   const solvedCountEl = document.getElementById("solved-count");
+  let exactGuessTimer;
 
   const shareBar = document.getElementById("share-bar");
   const shareResultBtn = document.getElementById("share-result-btn");
@@ -89,18 +90,7 @@
     shareBar.classList.add("visible");
   }
 
-  guessForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const guess = guessInput.value.trim();
-    if (!guess) return;
-
-    const res = await fetch("/quiz/" + quizId + "/guess", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ guess: guess }),
-    });
-    const data = await res.json();
-
+  function applyGuessResponse(data) {
     if (data.status === "correct" || data.status === "close") {
       setFeedback(data.status, data.message);
       const slotEl = slotFor(data.player.index);
@@ -121,6 +111,38 @@
     } else {
       setFeedback("wrong", data.message || "Not a match - keep trying!");
     }
+  }
+
+  guessInput.addEventListener("input", function () {
+    clearTimeout(exactGuessTimer);
+    const guess = guessInput.value.trim();
+    if (!guess) return;
+
+    exactGuessTimer = setTimeout(async function () {
+      const res = await fetch("/quiz/" + quizId + "/exact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guess: guess }),
+      });
+      const data = await res.json();
+      if (guessInput.value.trim() === guess && data.status === "correct") {
+        applyGuessResponse(data);
+      }
+    }, 250);
+  });
+
+  guessForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const guess = guessInput.value.trim();
+    if (!guess) return;
+
+    const res = await fetch("/quiz/" + quizId + "/guess", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ guess: guess }),
+    });
+    const data = await res.json();
+    applyGuessResponse(data);
   });
 
   // Clue modal

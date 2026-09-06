@@ -171,6 +171,45 @@ def submit_guess(quiz_id: str):
     )
 
 
+@bp.route("/quiz/<quiz_id>/exact", methods=["POST"])
+def submit_exact_guess(quiz_id: str):
+    quiz = _quiz_or_404(quiz_id)
+    if quiz is None:
+        return jsonify({"status": "error", "message": "Unknown quiz."}), 404
+    if not _is_quiz_unlocked(quiz):
+        return jsonify({"status": "locked", "message": "This quiz is not unlocked yet."}), 403
+
+    data = request.get_json(silent=True) or {}
+    guess = str(data.get("guess", "")).strip()
+    state = progress_store.get_quiz_progress(quiz_id)
+    solved = set(state["solved"])
+
+    if state["given_up"] or len(solved) >= quiz.total_players:
+        return jsonify({"status": "already_complete", "message": "This quiz is already finished."})
+
+    outcome = match_guess(guess, quiz.players, solved)
+    if outcome.result != MatchResult.CORRECT:
+        return jsonify({"status": "not_exact"})
+
+    player = quiz.players[outcome.player_index]
+    if len(player.surname.replace(" ", "")) <= 3:
+        return jsonify({"status": "not_exact"})
+
+    progress_store.mark_solved(quiz_id, outcome.player_index)
+    new_solved_count = len(solved) + 1
+    completed = new_solved_count >= quiz.total_players
+    return jsonify(
+        {
+            "status": "correct",
+            "message": f"Correct! {player.name} played for both clubs.",
+            "player": _player_public_dict(player, outcome.player_index),
+            "solved_count": new_solved_count,
+            "total": quiz.total_players,
+            "completed": completed,
+        }
+    )
+
+
 @bp.route("/quiz/<quiz_id>/clue", methods=["POST"])
 def request_clue(quiz_id: str):
     quiz = _quiz_or_404(quiz_id)
