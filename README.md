@@ -119,11 +119,11 @@ platform imports `app` from `run.py` directly, so it's enough to:
   answers for these players, and the full name is always accepted too.
 - **Fuzzy matching thresholds** (`app/matching.py`): an exact match (after
   lower-casing, accent-stripping and punctuation removal) is "correct". A
-  fuzzy ratio of 70+ against the closest unsolved player is treated as
-  "close" (typo/misspelling territory). Below that, or for guesses under 3
-  characters, the guess is just "not a match". These thresholds were
-  tuned by testing against the actual player list to avoid false "close"
-  matches on unrelated words.
+  fuzzy ratio of 90+ against the closest unsolved player is awarded as a
+  "close" answer. Scores from 70 to 89 receive yellow near-miss feedback but
+  do not solve the player. Scores below 70, or guesses under 3 characters,
+  are treated as "not a match". These thresholds were tuned by testing
+  against the actual player list to avoid false matches on unrelated words.
 - **Progress storage**: there's no login/account system in the brief, so
   "the user should be able to keep playing without losing found answers"
   is implemented as per-browser progress via a signed session cookie,

@@ -291,6 +291,11 @@ a {
 }
 
 #feedback-message.close {
+  background: #52a96b;
+  color: var(--charlton-white);
+}
+
+#feedback-message.near {
   background: #b8860b;
   color: var(--charlton-white);
 }

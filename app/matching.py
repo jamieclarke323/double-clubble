@@ -10,8 +10,10 @@ spec handed down by the user):
   player's accepted answers (their surname, their full name, or - for the
   handful of multi-word surnames - the final word alone).
 * A guess is CLOSE if it doesn't exactly match but scores >= CLOSE_THRESHOLD
-  on a fuzzy ratio against the best-matching accepted answer. This is what
-  catches minor typos/misspellings ("Guddmunson").
+    on a fuzzy ratio against the best-matching accepted answer. This awards
+    minor typos/misspellings ("Guddmunson").
+* A guess is NEAR if it scores >= NEAR_THRESHOLD but below CLOSE_THRESHOLD.
+    It receives feedback but does not solve the player.
 * Anything else is treated as WRONG (no useful match found).
 * Guesses shorter than MIN_GUESS_LENGTH characters are never matched, to
   avoid short strings fuzzy-matching against many different surnames.
@@ -26,7 +28,8 @@ from enum import Enum
 
 from rapidfuzz import fuzz
 
-CLOSE_THRESHOLD = 70
+CLOSE_THRESHOLD = 90
+NEAR_THRESHOLD = 70
 MIN_GUESS_LENGTH = 3
 
 # Characters that unicodedata's NFKD decomposition does not reduce to a
@@ -49,6 +52,7 @@ _EXTRA_TRANSLITERATIONS = {
 class MatchResult(Enum):
     CORRECT = "correct"
     CLOSE = "close"
+    NEAR = "near"
     WRONG = "wrong"
 
 
@@ -110,5 +114,8 @@ def match_guess(guess: str, players, solved_indices: set[int]) -> GuessOutcome:
 
     if best_index is not None and best_score >= CLOSE_THRESHOLD:
         return GuessOutcome(MatchResult.CLOSE, best_index, best_score)
+
+    if best_index is not None and best_score >= NEAR_THRESHOLD:
+        return GuessOutcome(MatchResult.NEAR, best_index, best_score)
 
     return GuessOutcome(MatchResult.WRONG, None, best_score)

@@ -149,6 +149,17 @@ def submit_guess(quiz_id: str):
             }
         )
 
+    if outcome.result == MatchResult.NEAR:
+        return jsonify(
+            {
+                "status": "near",
+                "message": "That's close but not quite right - try again.",
+                "solved_count": len(solved),
+                "total": quiz.total_players,
+                "completed": False,
+            }
+        )
+
     return jsonify(
         {
             "status": "wrong",

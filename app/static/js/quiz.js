@@ -111,6 +111,8 @@
         disableAllControls();
         showCongrats();
       }
+    } else if (data.status === "near") {
+      setFeedback("near", data.message);
     } else if (data.status === "already_complete") {
       setFeedback("wrong", data.message);
     } else if (data.status === "locked") {

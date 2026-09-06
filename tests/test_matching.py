@@ -47,6 +47,13 @@ def test_minor_misspelling_is_close():
     assert outcome.player_index == 0
 
 
+def test_less_than_90_percent_is_near_not_close():
+    players = [make_player("Darren Bent")]
+    outcome = match_guess("Benx", players, set())
+    assert outcome.result == MatchResult.NEAR
+    assert outcome.player_index == 0
+
+
 def test_unrelated_guess_is_wrong():
     players = [make_player("Tal Ben Haim"), make_player("Darren Bent")]
     outcome = match_guess("Zzzxxqq", players, set())

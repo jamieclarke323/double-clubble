@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 from app.data_loader import QUIZ_TIMEZONE, Player, Quiz
 
@@ -14,6 +14,8 @@ def test_home_page_lists_fixtures(client):
 def test_future_quiz_shows_unlock_message(client, app):
     app.config["BYPASS_UNLOCK"] = False
     quiz = app.config["QUIZZES"][0]
+    tomorrow = datetime.now(QUIZ_TIMEZONE).date() + timedelta(days=1)
+    quiz.unlock_at = datetime.combine(tomorrow, time(hour=7), tzinfo=QUIZ_TIMEZONE)
     resp = client.get(f"/quiz/{quiz.quiz_id}")
     assert resp.status_code == 200
     assert b"Unlocks" in resp.data
@@ -28,6 +30,7 @@ def test_unknown_quiz_returns_404(client):
 def test_guess_endpoint_locked_before_unlock(client, app):
     app.config["BYPASS_UNLOCK"] = False
     quiz = app.config["QUIZZES"][0]
+    quiz.unlock_at = datetime.now(QUIZ_TIMEZONE) + timedelta(days=1)
     resp = client.post(f"/quiz/{quiz.quiz_id}/guess", json={"guess": "Anything"})
     assert resp.status_code == 403
     assert resp.get_json()["status"] == "locked"
@@ -80,11 +83,20 @@ def test_correct_guess_marks_player_found(client, app):
 
 def test_close_misspelling_gives_close_feedback(client, app):
     quiz = _tiny_quiz_app(app)
-    resp = client.post(f"/quiz/{quiz.quiz_id}/guess", json={"guess": "Powal"})
+    resp = client.post(f"/quiz/{quiz.quiz_id}/guess", json={"guess": "Powel"})
     data = resp.get_json()
     assert data["status"] == "close"
     assert data["player"]["name"] == "Chris Powell"
     assert data["solved_count"] == 1
+
+
+def test_near_miss_does_not_solve_player(client, app):
+    quiz = _tiny_quiz_app(app)
+    resp = client.post(f"/quiz/{quiz.quiz_id}/guess", json={"guess": "Powal"})
+    data = resp.get_json()
+    assert data["status"] == "near"
+    assert data["solved_count"] == 0
+    assert "player" not in data
 
 
 def test_completing_all_players_sets_completed_true(client, app):
