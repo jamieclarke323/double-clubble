@@ -14,11 +14,16 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="{{ url_for('quiz.index') }}">
-      <img class="brand-icon" src="{{ url_for('static', filename='img/sword-icon-white.png') }}" alt="">
-      <span class="brand-double">DOUBLE</span>
-      <span class="brand-clubble">CLUBBLE</span>
-    </a>
+    <div class="brand-row">
+      {% if request.endpoint == 'quiz.quiz_page' %}
+        <a class="quiz-back" href="{{ url_for('quiz.index') }}" aria-label="Back to all fixtures" title="Back to all fixtures">&lt;</a>
+      {% endif %}
+      <a class="brand" href="{{ url_for('quiz.index') }}">
+        <img class="brand-icon" src="{{ url_for('static', filename='img/sword-icon-white.png') }}" alt="">
+        <span class="brand-double">DOUBLE</span>
+        <span class="brand-clubble">CLUBBLE</span>
+      </a>
+    </div>
     <p class="brand-tagline">Name the Charlton Athletic &amp; players who have also played for the opposition</p>
   </header>
 
