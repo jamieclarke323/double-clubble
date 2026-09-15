@@ -102,7 +102,7 @@
     toastImageIndex += 1;
     clearTimeout(toastHideTimer);
     correctToast.classList.add("visible");
-    toastHideTimer = setTimeout(() => correctToast.classList.remove("visible"), 3000);
+    toastHideTimer = setTimeout(() => correctToast.classList.remove("visible"), 2500);
   }
 
   function applyGuessResponse(data) {
