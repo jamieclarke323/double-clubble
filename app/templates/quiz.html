@@ -101,6 +101,10 @@
     </div>
   </div>
 
+  <div class="toast-overlay" id="correct-toast">
+    <img class="toast-image" id="correct-toast-image" alt="Correct!">
+  </div>
+
   <!-- Fallback share preview modal (used when the Web Share API can't
        attach a file directly, e.g. some desktop browsers) -->
   <div class="modal-overlay" id="share-modal-overlay">
@@ -124,6 +128,11 @@
     window.SITE_NAME = {{ site_name|tojson }};
     window.SITE_URL = {{ site_url|tojson }};
     window.SWORD_ICON_URL = {{ url_for('static', filename='img/sword-icon-white.png')|tojson }};
+    window.CORRECT_TOAST_IMAGES = [
+      {{ url_for('static', filename='img/JackoToast.png')|tojson }},
+      {{ url_for('static', filename='img/MendoncaToast.png')|tojson }},
+      {{ url_for('static', filename='img/PowellToast.png')|tojson }}
+    ];
   </script>
   <script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
 {% endblock %}

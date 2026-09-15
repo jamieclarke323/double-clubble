@@ -90,6 +90,21 @@
     shareBar.classList.add("visible");
   }
 
+  const correctToast = document.getElementById("correct-toast");
+  const correctToastImage = document.getElementById("correct-toast-image");
+  const toastImages = window.CORRECT_TOAST_IMAGES || [];
+  let toastImageIndex = 0;
+  let toastHideTimer;
+
+  function showCorrectToast() {
+    if (toastImages.length === 0) return;
+    correctToastImage.src = toastImages[toastImageIndex % toastImages.length];
+    toastImageIndex += 1;
+    clearTimeout(toastHideTimer);
+    correctToast.classList.add("visible");
+    toastHideTimer = setTimeout(() => correctToast.classList.remove("visible"), 1500);
+  }
+
   function applyGuessResponse(data) {
     if (data.status === "correct" || data.status === "close") {
       setFeedback(data.status, data.message);
@@ -97,6 +112,7 @@
       if (slotEl) fillSlot(slotEl, data.player);
       solvedCountEl.textContent = data.solved_count;
       guessInput.value = "";
+      showCorrectToast();
       if (data.completed) {
         disableAllControls();
         showCongrats();
