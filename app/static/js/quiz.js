@@ -96,6 +96,12 @@
   let toastImageIndex = 0;
   let toastHideTimer;
 
+  // Preload so the image is already cached and appears instantly when triggered.
+  toastImages.forEach((src) => {
+    const preloadImg = new Image();
+    preloadImg.src = src;
+  });
+
   function showCorrectToast() {
     if (toastImages.length === 0) return;
     correctToastImage.src = toastImages[toastImageIndex % toastImages.length];
