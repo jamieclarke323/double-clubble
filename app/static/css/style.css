@@ -439,10 +439,14 @@ a {
 /* Correct-answer toast */
 .toast-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50vh;
   display: none;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   pointer-events: none;
   z-index: 200;
 }
@@ -453,6 +457,7 @@ a {
 
 .toast-image {
   display: block;
+  max-height: 100%;
 }
 
 /* Modal */
